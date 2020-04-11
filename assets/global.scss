@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: #2F2F2F;
+  font-family: 'Montserrat', sans-serif;
+}
+
+h1, h2, h3, h4, h5, p {
+  color: #F1F1F1;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+a {
+  color:#F1F1F1;
+  text-decoration: none;
+  margin: 10px;
+}
