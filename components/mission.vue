@@ -5,11 +5,15 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Vue, Component } from 'nuxt-property-decorator'
+
+@Component
+export default class Mission extends Vue {
 
 }
 </script>
+
 
 <style lang="scss" scoped>
 .container {

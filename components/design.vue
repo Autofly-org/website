@@ -10,3 +10,12 @@
     <img src="/images/plan.svg" alt="">
   </div>
 </template>
+
+<script lang="ts">
+import { Vue, Component} from 'nuxt-property-decorator'
+
+@Component
+export default class Design extends Vue {
+
+}
+</script>

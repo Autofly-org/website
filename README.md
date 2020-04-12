@@ -19,4 +19,10 @@ $ npm run start
 $ npm run generate
 ```
 
+## Docker 
+
+```
+$ docker build -t website .
+```
+
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
