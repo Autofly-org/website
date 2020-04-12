@@ -30,5 +30,4 @@ jobs:
 
       - name: Install commands and deploy on cloud run
         run: |
-          gcloud components install --quiet
           gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
