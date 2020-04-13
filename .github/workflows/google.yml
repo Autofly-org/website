@@ -43,15 +43,8 @@ jobs:
         run: "gcloud auth configure-docker --quiet"
 
       - name: Push image to Google Cloud Container Registry
-        if: $STAGE == prod
-          run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
-        if: $STAGE == dev
-          run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }}
+        run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
 
       - name: Install commands and deploy on cloud run
-        if: $STAGE == prod
-          run: |
-            gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
-        if: $STAGE == dev
-          run: |
-            gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
+        run: |
+          gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
