@@ -22,16 +22,16 @@ jobs:
 
       - name: Set env default
         run: |
-          echo "::set-env name=STAGE::dev"
+          echo "::set-env name=STAGE::GCLOUD_APP_NAME_DEV"
 
       - name: Set env to production
         if: endsWith(github.ref, '/master')
         run: |
-          echo "::set-env name=STAGE::prod"
+          echo "::set-env name=STAGE::GCLOUD_APP_NAME"
 
       - name: Build Docker image
         run: |
-          docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
+          docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.$STAGE }}
 
       - name: Authenticate into Google Cloud Platform
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -43,8 +43,8 @@ jobs:
         run: "gcloud auth configure-docker --quiet"
 
       - name: Push image to Google Cloud Container Registry
-        run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
+        run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.$STAGE }}
 
       - name: Install commands and deploy on cloud run
         run: |
-          gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
+          gcloud run deploy ${{ secrets.$STAGE }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.$STAGE }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
