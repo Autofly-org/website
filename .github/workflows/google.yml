@@ -30,12 +30,12 @@ jobs:
           SERVER: prod
 
       - name: Build Docker image for production
-        if: SERVER == prod
+        if: env.SERVER == prod
         run: |
           docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
 
       - name: Build Docker image for dev
-        if: SERVER == dev
+        if: env.SERVER == dev
         run: |
           docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }}
 
@@ -49,19 +49,19 @@ jobs:
         run: "gcloud auth configure-docker --quiet"
 
       - name: Push image to Google Cloud Container Registry for production
-        if: SERVER == prod
+        if: env.SERVER == prod
         run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
 
       - name: Push image to Google Cloud Container Registry for dev
-        if: SERVER == dev
+        if: env.SERVER == dev
         run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }}
 
       - name: Install commands and deploy on cloud run for production
-        if: SERVER == prod
+        if: env.SERVER == prod
         run: |
           gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
 
       - name: Install commands and deploy on cloud run for dev
-        if: SERVER == prod
+        if: env.SERVER == prod
         run: |
           gcloud run deploy ${{ secrets.GCLOUD_APP_NAME_DEV }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
