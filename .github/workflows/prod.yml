@@ -1,21 +1,23 @@
-
+# Deploing to prod server
 name: Deploy the application to Google Cloud Run
+
 on:
-  push:
+  pull_request:
     branches:
       - 'master'
 
 jobs:
   deploy:
-    name: Deploy job
+    name: Deploy job for prod
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
 
-      - name: Build Docker image
+      - name: Build Docker image for production
         run: |
           docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
+
       - name: Authenticate into Google Cloud Platform
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
