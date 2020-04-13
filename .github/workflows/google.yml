@@ -22,16 +22,22 @@ jobs:
 
       - name: Set env default
         run: |
-          echo "::set-env name=STAGE::GCLOUD_APP_NAME_DEV"
+          echo "::set-env name=STAGE::dev"
 
       - name: Set env to production
         if: endsWith(github.ref, '/master')
         run: |
-          echo "::set-env name=STAGE::GCLOUD_APP_NAME"
+          echo "::set-env name=STAGE:prod"
 
-      - name: Build Docker image
+      - name: Build Docker image for production
+        if: $STAGE == prod
         run: |
-          docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.$STAGE }}
+          docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
+
+      - name: Build Docker image for dev
+        if: $STAGE == dev
+        run: |
+          docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }}
 
       - name: Authenticate into Google Cloud Platform
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -42,9 +48,20 @@ jobs:
       - name: Configure Docker to use Google Cloud Platform
         run: "gcloud auth configure-docker --quiet"
 
-      - name: Push image to Google Cloud Container Registry
-        run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.$STAGE }}
+      - name: Push image to Google Cloud Container Registry for production
+        if: $STAGE == prod
+        run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
 
-      - name: Install commands and deploy on cloud run
+      - name: Push image to Google Cloud Container Registry for dev
+        if: $STAGE == dev
+        run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }}
+
+      - name: Install commands and deploy on cloud run for production
+        if: $STAGE == prod
         run: |
-          gcloud run deploy ${{ secrets.$STAGE }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.$STAGE }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
+          gcloud run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
+
+      - name: Install commands and deploy on cloud run for dev
+        if: $STAGE == prod
+        run: |
+          gcloud run deploy ${{ secrets.GCLOUD_APP_NAME_DEV }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME_DEV }} --project ${{ secrets.GCLOUD_PROJECT }} --region europe-west1 --platform managed
